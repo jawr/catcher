@@ -1,0 +1,21 @@
+Delivered-To: jess@catcher.mx.ax
+Received: by 2002:a17:90b:3541:0:0:0:0 with SMTP id lt1csp117348pjb;
+        Wed, 10 Nov 2021 16:34:59 -0800 (PST)
+MIME-Version: 1.0
+Reply-To: John Doe <john.doe@catcher.mx.ax>
+Sender: John Doe <john.doe@catcher.mx.ax>
+Message-ID: <0000000000002b205e05d07883c8@catcher.mx.ax>
+Date: Thu, 11 Nov 2021 00:34:58 +0000
+Subject: Updated invitation
+From: John Doe <john.doe@catcher.mx.ax>
+To: jess@catcher.mx.ax
+Content-Type: multipart/mixed; boundary="0000000000002b204b05d07883c7"
+
+--0000000000002b204b05d07883c7
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<h1>hello</h1>
+
+--0000000000002b204b05d07883c7
+

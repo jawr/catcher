@@ -1,0 +1,10 @@
+domain: "catcher.mx.ax"
+http:
+  address: "localhost:8080"
+  site_root: "../frontend/out/"
+smtp:
+  address: localhost:2525
+  domain: localhost
+  allowed_domains:
+    - "localhost"
+    - "catcher.mx.ax"
