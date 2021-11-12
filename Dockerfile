@@ -3,7 +3,7 @@ WORKDIR /build
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install --frozen-lockfile
 COPY frontend/ ./
-RUN npm run build
+RUN NODE_ENV=production npm run build
 
 FROM golang:alpine AS service-builder
 WORKDIR /build
