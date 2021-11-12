@@ -20,7 +20,7 @@ const Emails: NextPage = () => {
       return
     }
 
-    const ws = new WebSocket(`ws://${process.env.NEXT_PUBLIC_WS_URI}/api/v1/subscribe`, 'binary')
+    const ws = new WebSocket(`ws://${window.location.host}/api/v1/subscribe`, 'binary')
 
     ws.onopen = () => {
       ws.send(JSON.stringify({key}))
