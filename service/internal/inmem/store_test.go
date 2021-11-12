@@ -85,6 +85,7 @@ func TestSubscribeUnsubscribe(t *testing.T) {
 	store := catcher.NewStoreService(inmem.NewStore())
 
 	key := "TestSubscribeUnsubscribe"
+	address := fmt.Sprintf("%s@%s", key, catcher.DefaultDomain)
 
 	sub := store.Subscribe(key)
 
@@ -93,14 +94,14 @@ func TestSubscribeUnsubscribe(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		emails := <-sub.C
-		is.Equal(1, emails.Len())
+		email := <-sub.C
+		is.Equal(address, email.To)
 	}()
 
 	time.Sleep(time.Second)
 
 	err := store.Add(key, catcher.Email{
-		To: fmt.Sprintf("%s@%s", key, catcher.DefaultDomain),
+		To: address,
 	})
 	is.NoErr(err)
 

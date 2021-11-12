@@ -15,6 +15,7 @@ import (
 
 const (
 	defaultTimeout time.Duration = 100
+	defaultAddr    string        = "localhost:8000"
 )
 
 type Config struct {
@@ -46,14 +47,13 @@ func NewServer(config Config, store catcher.Store) (*Server, error) {
 
 	api := router.PathPrefix("/api/v1/").Subrouter()
 
-	api.HandleFunc("/emails/{key}", s.handleEmails).Methods("GET")
-	api.HandleFunc("/subscribe", s.handleSubscribe)
+	api.HandleFunc("/subscribe", s.handleSubscribe())
 	api.HandleFunc("/random", s.handleRandomEmail).Methods("GET")
 
 	router.PathPrefix("/").HandlerFunc(s.handleSPA)
 
 	if len(config.Address) == 0 {
-		config.Address = "127.0.0.1:8080"
+		config.Address = defaultAddr
 	}
 
 	if config.ReadTimeout == 0 {

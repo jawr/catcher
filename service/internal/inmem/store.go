@@ -43,7 +43,7 @@ func (s *store) Add(key string, email catcher.Email) error {
 	if subscribers, ok := s.subscribers[key]; ok {
 		for _, sub := range subscribers {
 			select {
-			case sub.C <- emails:
+			case sub.C <- email:
 			default:
 			}
 		}
@@ -80,7 +80,7 @@ func (s *store) Get(key string) catcher.Emails {
 // is received
 func (s *store) Subscribe(key string) *catcher.Subscription {
 	subscription := &catcher.Subscription{
-		C: make(chan catcher.Emails),
+		C: make(chan catcher.Email),
 	}
 
 	s.subscribersMtx.Lock()

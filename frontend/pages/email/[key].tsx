@@ -11,7 +11,7 @@ const Emails: NextPage = () => {
   const router = useRouter()
   const key: string = router.query["key"]?.toString().toLowerCase() ?? ''
   const [selected, setSelected] = useState<Email | null>(null)
-  const [data, setData] = useState<Email[]>([])
+  const [emails, setEmails] = useState<Email[]>([])
   const [error, setError] = useState<Error | null>(null)
 
 
@@ -32,7 +32,8 @@ const Emails: NextPage = () => {
 
     ws.onmessage = (event: MessageEvent) => {
       try {
-        setData(JSON.parse(event.data).reverse())
+        const email: Email = JSON.parse(event.data);
+        setEmails([email, ...emails]);
       } catch (error) {
         setError(error as Error)
       }
@@ -50,7 +51,7 @@ const Emails: NextPage = () => {
 
         <div className="mt-6">
           {error && <p>An unexpected error occured: {error.message}</p>}
-          {data && <EmailsTable emails={data} setSelected={setSelected} />}
+          {emails && <EmailsTable emails={emails} setSelected={setSelected} />}
         </div>
 
         {selected && <div className="mt-6 border p-6 border-b border-gray-200 sm:rounded-lg">

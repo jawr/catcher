@@ -19,7 +19,7 @@ type Consumer interface {
 
 // Subscription contains a channel for receiving emails and an id for unsubscribing
 type Subscription struct {
-	C chan Emails
+	C chan Email
 }
 
 // Store is a service that accepts emails and makes them readily available
