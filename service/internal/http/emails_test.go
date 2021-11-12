@@ -14,7 +14,8 @@ import (
 )
 
 var testConfig = Config{
-	Address: "0.0.0.0:0",
+	Address:  "0.0.0.0:0",
+	SiteRoot: "testdata/index.html",
 }
 
 func readExampleEmail(is *is.I) []byte {
@@ -32,7 +33,8 @@ func TestHandleEmailsNoEmail(t *testing.T) {
 
 	store := catcher.NewStoreService(inmem.NewStore())
 
-	server := NewServer(testConfig, store)
+	server, err := NewServer(testConfig, store)
+	is.NoErr(err)
 
 	server.handleEmails(recorder, request)
 
@@ -51,7 +53,8 @@ func TestHandleEmailsNotFound(t *testing.T) {
 
 	store := catcher.NewStoreService(inmem.NewStore())
 
-	server := NewServer(testConfig, store)
+	server, err := NewServer(testConfig, store)
+	is.NoErr(err)
 
 	server.handleEmails(recorder, request)
 
@@ -61,7 +64,7 @@ func TestHandleEmailsNotFound(t *testing.T) {
 	defer response.Body.Close()
 
 	var emails []catcher.Email
-	err := json.NewDecoder(response.Body).Decode(&emails)
+	err = json.NewDecoder(response.Body).Decode(&emails)
 	is.NoErr(err)
 
 	is.Equal(0, len(emails))
@@ -87,7 +90,8 @@ func TestHandleEmails(t *testing.T) {
 		})
 	}
 
-	server := NewServer(testConfig, store)
+	server, err := NewServer(testConfig, store)
+	is.NoErr(err)
 
 	server.handleEmails(recorder, request)
 
@@ -97,7 +101,7 @@ func TestHandleEmails(t *testing.T) {
 	defer response.Body.Close()
 
 	var emails []catcher.Email
-	err := json.NewDecoder(response.Body).Decode(&emails)
+	err = json.NewDecoder(response.Body).Decode(&emails)
 	is.NoErr(err)
 
 	is.Equal(expected, len(emails))
@@ -111,7 +115,8 @@ func TestHandleRandomEmail(t *testing.T) {
 
 	store := catcher.NewStoreService(inmem.NewStore())
 
-	server := NewServer(testConfig, store)
+	server, err := NewServer(testConfig, store)
+	is.NoErr(err)
 
 	server.handleRandomEmail(recorder, request)
 
@@ -119,7 +124,7 @@ func TestHandleRandomEmail(t *testing.T) {
 	defer response.Body.Close()
 
 	var key RandomEmailKeyResponse
-	err := json.NewDecoder(response.Body).Decode(&key)
+	err = json.NewDecoder(response.Body).Decode(&key)
 	is.NoErr(err)
 
 	is.Equal(randomKeyLength, len(key.Key))

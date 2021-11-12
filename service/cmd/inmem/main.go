@@ -41,10 +41,6 @@ func run() error {
 	// setup the store
 	store := catcher.NewStoreService(inmem.NewStore())
 
-	if err := loadExampleFile(store); err != nil {
-		return fmt.Errorf("unable to load example file: %w", err)
-	}
-
 	// setup the consumer and producer
 	queue := make(chan catcher.Email)
 

@@ -1,0 +1,8 @@
+domain: "catcher.mx.ax"
+http:
+  address: ":80"
+  site_root: "/app/frontend"
+smtp:
+  address: ":25"
+  allowed_domains:
+    - "catcher.mx.ax"
