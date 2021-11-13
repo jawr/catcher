@@ -33,7 +33,7 @@ const Emails: NextPage = () => {
 
     ws.onmessage = (event: MessageEvent) => {
       try {
-        if (messageCount == 1) {
+        if (messageCount == 0) {
           const emails: Email[] = JSON.parse(event.data);
           setEmails(emails);
         } else {
