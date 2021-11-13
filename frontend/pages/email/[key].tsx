@@ -21,6 +21,7 @@ const Emails: NextPage = () => {
     }
 
     const ws = new WebSocket(`${process.env.NEXT_PUBLIC_WS_URI}/api/v1/subscribe`, 'binary')
+    let messageCount = 0
 
     ws.onopen = () => {
       ws.send(JSON.stringify({key}))
@@ -32,11 +33,17 @@ const Emails: NextPage = () => {
 
     ws.onmessage = (event: MessageEvent) => {
       try {
-        const email: Email = JSON.parse(event.data);
-        setEmails([email, ...emails]);
+        if (messageCount == 1) {
+          const emails: Email[] = JSON.parse(event.data);
+          setEmails(emails);
+        } else {
+          const email: Email = JSON.parse(event.data);
+          setEmails([email, ...emails]);
+        }
       } catch (error) {
         setError(error as Error)
       }
+      messageCount++
     }
   },[key])
 
