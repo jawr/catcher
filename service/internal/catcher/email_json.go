@@ -22,30 +22,29 @@ type emailJSON struct {
 }
 
 func (e Emails) MarshalJSON() ([]byte, error) {
-	emails := make([]emailJSON, 0)
+	return json.Marshal(e.emails)
+}
 
-	for _, e := range e.emails {
-		reader, err := gzip.NewReader(bytes.NewBuffer(e.Data))
-		if err != nil {
-			return nil, fmt.Errorf("unable to decompress email data: %w", err)
-		}
-
-		envelope, err := enmime.ReadEnvelope(reader)
-		if err != nil {
-			return nil, fmt.Errorf("unable to read envelope: %w", err)
-		}
-
-		emails = append(emails, emailJSON{
-			From:       e.From,
-			To:         e.To,
-			Subject:    envelope.GetHeader("subject"),
-			Headers:    envelope.Root.Header,
-			HTML:       []byte(envelope.HTML),
-			Text:       []byte(envelope.Text),
-			ReceivedAt: e.ReceivedAt,
-		})
-
+func (e Email) MarshalJSON() ([]byte, error) {
+	reader, err := gzip.NewReader(bytes.NewBuffer(e.Data))
+	if err != nil {
+		return nil, fmt.Errorf("unable to decompress email data: %w", err)
 	}
 
-	return json.Marshal(&emails)
+	envelope, err := enmime.ReadEnvelope(reader)
+	if err != nil {
+		return nil, fmt.Errorf("unable to read envelope: %w", err)
+	}
+
+	email := emailJSON{
+		From:       e.From,
+		To:         e.To,
+		Subject:    envelope.GetHeader("subject"),
+		Headers:    envelope.Root.Header,
+		HTML:       []byte(envelope.HTML),
+		Text:       []byte(envelope.Text),
+		ReceivedAt: e.ReceivedAt,
+	}
+
+	return json.Marshal(&email)
 }
