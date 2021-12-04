@@ -26,7 +26,7 @@ type Server struct {
 	smtpd smtp.Server
 }
 
-func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*Server, error) {
+func NewServer(domain string, config Config, handler catcher.EmailHandlerFn, magic *certmagic.Config) (*Server, error) {
 	if len(config.Addr) == 0 {
 		return nil, fmt.Errorf("%w: smtpd address is required", catcher.ErrInvalid)
 	}
@@ -43,8 +43,8 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*S
 	server.smtpd.Addr = config.Addr
 	server.smtpd.Domain = domain
 
-	if len(config.TLSName) > 0 {
-		server.smtpd.TLSConfig = certmagic.Default.TLSConfig()
+	if magic != nil {
+		server.smtpd.TLSConfig = magic.TLSConfig()
 	}
 
 	if config.ReadTimeout == 0 {

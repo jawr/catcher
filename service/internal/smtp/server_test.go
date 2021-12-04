@@ -9,13 +9,13 @@ import (
 	"github.com/matryer/is"
 )
 
-func noopEmailHandlerFn (_ catcher.Email) error { return nil }
+func noopEmailHandlerFn(_ catcher.Email) error { return nil }
 
 func TestServerInvalidConfig(t *testing.T) {
 	is := is.New(t)
 
-	cases := []struct{
-		name string
+	cases := []struct {
+		name   string
 		domain string
 		config smtp.Config
 	}{
@@ -26,7 +26,7 @@ func TestServerInvalidConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "empty addr",
+			name:   "empty addr",
 			domain: catcher.DefaultDomain,
 			config: smtp.Config{},
 		},
@@ -35,7 +35,7 @@ func TestServerInvalidConfig(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
-			_, err := smtp.NewServer(tc.domain, tc.config, noopEmailHandlerFn)
+			_, err := smtp.NewServer(tc.domain, tc.config, noopEmailHandlerFn, nil)
 			is.True(errors.Is(err, catcher.ErrInvalid))
 		})
 	}
