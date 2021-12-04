@@ -39,7 +39,7 @@ func run() error {
 	// create certmagic
 	certmagic.DefaultACME.Agreed = true
 	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
-	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
+	certmagic.DefaultACME.CA = certmagic.LetsEncryptProductionCA
 	certmagic.DefaultACME.DNS01Solver = &certmagic.DNS01Solver{
 		DNSProvider: &cloudflare.Provider{
 			APIToken: os.Getenv("CLOUDFLARE_TOKEN"),
