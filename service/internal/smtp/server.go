@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/caddyserver/certmagic"
 	"github.com/emersion/go-smtp"
 	"github.com/jawr/catcher/service/internal/catcher"
 )
@@ -18,6 +19,7 @@ type Config struct {
 	ReadTimeout      time.Duration `yaml:"read_timeout"`
 	WriteTimeout     time.Duration `yaml:"write_timeout"`
 	MaxMessageKBytes int           `yaml:"max_message_kbytes"`
+	TLSName          string        `yaml:"tls_name"`
 }
 
 type Server struct {
@@ -40,7 +42,13 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*S
 
 	server.smtpd.Addr = config.Addr
 	server.smtpd.Domain = domain
-	server.smtpd.EnableREQUIRETLS = true
+
+	if len(config.TLSName) > 0 {
+		server.smtpd.TLSConfig, err = certmagic.TLS([]string{config.TLSName})
+		if err != nil {
+			return nil, fmt.Errorf("unable to get tls config: %w", err)
+		}
+	}
 
 	if config.ReadTimeout == 0 {
 		config.ReadTimeout = defaultTimeout

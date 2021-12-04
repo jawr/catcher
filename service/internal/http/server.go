@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/caddyserver/certmagic"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/jawr/catcher/service/internal/catcher"
@@ -30,10 +31,11 @@ type Server struct {
 	store    catcher.Store
 	httpd    *http.Server
 	siteRoot string
+	acme     *certmagic.ACMEManager
 }
 
 // NewServer validates and configures a Server
-func NewServer(config Config, store catcher.Store) (*Server, error) {
+func NewServer(config Config, acme *certmagic.ACMEManager, store catcher.Store) (*Server, error) {
 	if _, err := os.Stat(filepath.Join(config.SiteRoot, "index.html")); errors.Is(err, os.ErrNotExist) {
 		return nil, fmt.Errorf("%w: %s", catcher.ErrInvalid, err)
 	}
@@ -41,6 +43,7 @@ func NewServer(config Config, store catcher.Store) (*Server, error) {
 	s := Server{
 		store:    store,
 		siteRoot: config.SiteRoot,
+		acme:     acme,
 	}
 
 	router := mux.NewRouter()
