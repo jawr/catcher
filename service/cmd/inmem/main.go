@@ -39,6 +39,7 @@ func run() error {
 	certmagic.DefaultACME.Agreed = true
 	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
 	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
+	certmagic.DefaultACME.DisableTLSALPNChallenge = true
 
 	magic := certmagic.NewDefault()
 	acme := certmagic.NewACMEManager(magic, certmagic.DefaultACME)
