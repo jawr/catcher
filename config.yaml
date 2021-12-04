@@ -4,6 +4,6 @@ http:
   site_root: "/app/frontend"
 smtp:
   address: ":2525"
-  tls_name: "mx.catcher.mx.ax"
+  tls_name: "ehlo.catcher.mx.ax"
   allowed_domains:
     - "catcher.mx.ax"

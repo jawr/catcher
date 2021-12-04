@@ -17,7 +17,6 @@ import (
 	"github.com/jawr/catcher/service/internal/inmem"
 	"github.com/jawr/catcher/service/internal/smtp"
 	"github.com/libdns/cloudflare"
-	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 )
 
@@ -36,11 +35,8 @@ func run() error {
 		return fmt.Errorf("unable to load config: %w", err)
 	}
 	log.Printf("loaded config...\n%+v", config)
-	log.Printf("Using token: %s", os.Getenv("CLOUDFLARE_TOKEN"))
 
 	// create certmagic
-	certmagic.Default.Logger = zap.NewExample()
-
 	certmagic.DefaultACME.Agreed = true
 	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
 	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
