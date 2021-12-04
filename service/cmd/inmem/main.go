@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"log"
@@ -43,6 +44,11 @@ func run() error {
 	certmagic.DefaultACME.DisableTLSALPNChallenge = true
 	certmagic.DefaultACME.AltHTTPPort = 8888
 	certmagic.Default.Logger = zap.NewExample()
+
+	err = certmagic.Default.ManageSync(context.Background(), []string{config.SMTP.TLSName})
+	if err != nil {
+		return fmt.Errorf("unable to sync certificates: %w", err)
+	}
 
 	// waitgroup for graceful shutdown
 	var wg sync.WaitGroup
