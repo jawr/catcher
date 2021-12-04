@@ -16,6 +16,7 @@ import (
 	"github.com/jawr/catcher/service/internal/http"
 	"github.com/jawr/catcher/service/internal/inmem"
 	"github.com/jawr/catcher/service/internal/smtp"
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 )
 
@@ -41,6 +42,7 @@ func run() error {
 	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
 	certmagic.DefaultACME.DisableTLSALPNChallenge = true
 	certmagic.DefaultACME.AltHTTPPort = 8888
+	certmagic.Default.Logger = zap.NewExample()
 
 	// waitgroup for graceful shutdown
 	var wg sync.WaitGroup
