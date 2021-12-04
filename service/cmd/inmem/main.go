@@ -11,12 +11,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/caddyserver/certmagic"
 	"github.com/jawr/catcher/service/internal/catcher"
 	"github.com/jawr/catcher/service/internal/http"
 	"github.com/jawr/catcher/service/internal/inmem"
 	"github.com/jawr/catcher/service/internal/smtp"
-	"github.com/libdns/cloudflare"
 	"gopkg.in/yaml.v2"
 )
 
@@ -35,16 +33,6 @@ func run() error {
 		return fmt.Errorf("unable to load config: %w", err)
 	}
 	log.Printf("loaded config...\n%+v", config)
-
-	// create certmagic
-	certmagic.DefaultACME.Agreed = true
-	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
-	certmagic.DefaultACME.CA = certmagic.LetsEncryptProductionCA
-	certmagic.DefaultACME.DNS01Solver = &certmagic.DNS01Solver{
-		DNSProvider: &cloudflare.Provider{
-			APIToken: os.Getenv("CLOUDFLARE_TOKEN"),
-		},
-	}
 
 	// waitgroup for graceful shutdown
 	var wg sync.WaitGroup

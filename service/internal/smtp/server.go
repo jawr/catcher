@@ -2,16 +2,19 @@ package smtp
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/caddyserver/certmagic"
 	"github.com/emersion/go-smtp"
 	"github.com/jawr/catcher/service/internal/catcher"
+	"github.com/libdns/cloudflare"
 )
 
 const (
 	defaultTimeout          time.Duration = 30
 	defaultMaxMessageKBytes int           = 1024
+	cloudflareToken         string        = "CLOUDFLARE_TOKEN"
 )
 
 type Config struct {
@@ -43,7 +46,18 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*S
 	server.smtpd.Addr = config.Addr
 	server.smtpd.Domain = domain
 
-	if len(config.TLSName) > 0 {
+	if len(config.TLSName) > 0 && len(os.Getenv(cloudflareToken)) > 0 {
+		// create certmagic
+		certmagic.DefaultACME.Agreed = true
+		certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
+		certmagic.DefaultACME.CA = certmagic.LetsEncryptProductionCA
+		certmagic.Default.DefaultServerName = config.TLSName
+		certmagic.DefaultACME.DNS01Solver = &certmagic.DNS01Solver{
+			DNSProvider: &cloudflare.Provider{
+				APIToken: os.Getenv(cloudflareToken),
+			},
+		}
+
 		server.smtpd.TLSConfig, err = certmagic.TLS([]string{config.TLSName})
 		if err != nil {
 			return nil, fmt.Errorf("unable to get TLS for %q: %w", config.TLSName, err)
