@@ -68,6 +68,22 @@ func run() error {
 	defer producer.Stop()
 	log.Println("started producer...")
 
+	// start http first so it can resolve certificates
+	httpd, err := http.NewServer(config.HTTP, acme, store)
+	if err != nil {
+		return fmt.Errorf("unable to start http server: %w", err)
+	}
+	defer httpd.Close()
+
+	go func() {
+		defer wg.Done()
+
+		if err := httpd.ListenAndServe(); err != nil {
+			log.Printf("error in httpd listen and serve: %s", err)
+		}
+	}()
+	log.Println("started httpd...")
+
 	// setup the smtpd
 	smtpd, err := smtp.NewServer(config.Domain, config.SMTP, func(email catcher.Email) error {
 		log.Printf("pushing email to consumer: %s -> %s", email.From, email.To)
@@ -86,21 +102,6 @@ func run() error {
 		}
 	}()
 	log.Println("started smtpd...")
-
-	httpd, err := http.NewServer(config.HTTP, acme, store)
-	if err != nil {
-		return fmt.Errorf("unable to start http server: %w", err)
-	}
-	defer httpd.Close()
-
-	go func() {
-		defer wg.Done()
-
-		if err := httpd.ListenAndServe(); err != nil {
-			log.Printf("error in httpd listen and serve: %s", err)
-		}
-	}()
-	log.Println("started httpd...")
 
 	// catch SIGINT
 	exit := make(chan os.Signal, 1)
