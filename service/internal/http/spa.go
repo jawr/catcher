@@ -12,7 +12,7 @@ import (
 // file located at the index path on the SPA handler will be served. This
 // is suitable behavior for serving an SPA (single page application).
 func (h *Server) handleSPA(w http.ResponseWriter, r *http.Request) {
-	if h.acme.HandleHTTPChallenge(w, r) {
+	if h.acme != nil && h.acme.HandleHTTPChallenge(w, r) {
 		log.Println("handling http challenge")
 		return
 	}
