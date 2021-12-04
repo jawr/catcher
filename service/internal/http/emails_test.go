@@ -32,7 +32,7 @@ func TestHandleRandomEmail(t *testing.T) {
 
 	store := catcher.NewStoreService(inmem.NewStore())
 
-	server, err := NewServer(testConfig, nil, store)
+	server, err := NewServer(testConfig, store)
 	is.NoErr(err)
 
 	server.handleRandomEmail(recorder, request)
