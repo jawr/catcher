@@ -44,10 +44,7 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*S
 	server.smtpd.Domain = domain
 
 	if len(config.TLSName) > 0 {
-		server.smtpd.TLSConfig, err = certmagic.TLS([]string{config.TLSName})
-		if err != nil {
-			return nil, fmt.Errorf("unable to get tls config: %w", err)
-		}
+		server.smtpd.TLSConfig = certmagic.Default.TLSConfig()
 	}
 
 	if config.ReadTimeout == 0 {

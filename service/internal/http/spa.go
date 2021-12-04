@@ -1,7 +1,6 @@
 package http
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,11 +11,6 @@ import (
 // file located at the index path on the SPA handler will be served. This
 // is suitable behavior for serving an SPA (single page application).
 func (h *Server) handleSPA(w http.ResponseWriter, r *http.Request) {
-	if h.acme != nil && h.acme.HandleHTTPChallenge(w, r) {
-		log.Println("handling http challenge")
-		return
-	}
-
 	// get the absolute path to prevent directory traversal
 	path, err := filepath.Abs(r.URL.Path)
 	if err != nil {

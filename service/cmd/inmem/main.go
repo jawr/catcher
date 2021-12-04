@@ -40,10 +40,7 @@ func run() error {
 	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
 	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
 	certmagic.DefaultACME.DisableTLSALPNChallenge = true
-	certmagic.Default.OnDemand = new(certmagic.OnDemandConfig)
-
-	magic := certmagic.NewDefault()
-	acme := certmagic.NewACMEManager(magic, certmagic.DefaultACME)
+	certmagic.DefaultACME.AltHTTPPort = 8888
 
 	// waitgroup for graceful shutdown
 	var wg sync.WaitGroup
@@ -71,7 +68,7 @@ func run() error {
 	log.Println("started producer...")
 
 	// start http first so it can resolve certificates
-	httpd, err := http.NewServer(config.HTTP, acme, store)
+	httpd, err := http.NewServer(config.HTTP, store)
 	if err != nil {
 		return fmt.Errorf("unable to start http server: %w", err)
 	}
