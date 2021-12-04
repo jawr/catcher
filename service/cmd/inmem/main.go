@@ -36,6 +36,7 @@ func run() error {
 		return fmt.Errorf("unable to load config: %w", err)
 	}
 	log.Printf("loaded config...\n%+v", config)
+	log.Printf("Using token: %s", os.Getenv("CLOUDFLARE_TOKEN"))
 
 	// create certmagic
 	certmagic.Default.Logger = zap.NewExample()
