@@ -10,7 +10,9 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/jhillyerd/enmime v0.9.2
+	github.com/libdns/cloudflare v0.1.0
 	github.com/matryer/is v1.4.0
+	go.uber.org/zap v1.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -31,7 +33,6 @@ require (
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
 	golang.org/x/sys v0.0.0-20210423082822-04245dca01da // indirect

@@ -3,22 +3,20 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
-	"context"
 	"fmt"
 	"io"
 	"log"
-	stdhttp "net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
 
 	"github.com/caddyserver/certmagic"
-	"github.com/gorilla/handlers"
 	"github.com/jawr/catcher/service/internal/catcher"
 	"github.com/jawr/catcher/service/internal/http"
 	"github.com/jawr/catcher/service/internal/inmem"
 	"github.com/jawr/catcher/service/internal/smtp"
+	"github.com/libdns/cloudflare"
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 )
@@ -42,35 +40,13 @@ func run() error {
 	// create certmagic
 	certmagic.Default.Logger = zap.NewExample()
 
-	var magic *certmagic.Config
-	var acme *certmagic.ACMEManager
-
-	if len(config.SMTP.TLSName) > 0 {
-		magic = certmagic.NewDefault()
-		acme = certmagic.NewACMEManager(magic, certmagic.ACMEManager{
-			Agreed:                  true,
-			Email:                   "catcher.mx.ax@lawrence.pm",
-			CA:                      certmagic.LetsEncryptStagingCA,
-			DisableTLSALPNChallenge: true,
-			AltHTTPPort:             8888,
-		})
-		magic.Issuers = append(magic.Issuers, acme)
-
-		// setup the temp http handler
-		mux := stdhttp.NewServeMux()
-		mux.HandleFunc("/", func(_ stdhttp.ResponseWriter, _ *stdhttp.Request) {})
-
-		server := stdhttp.Server{}
-		server.Handler = handlers.LoggingHandler(os.Stdout, acme.HTTPChallengeHandler(mux))
-		server.Addr = ":8888"
-		go server.ListenAndServe()
-
-		err = magic.ManageSync(context.Background(), []string{config.SMTP.TLSName})
-		if err != nil {
-			return fmt.Errorf("unable to sync certificates: %w", err)
-		}
-
-		server.Close()
+	certmagic.DefaultACME.Agreed = true
+	certmagic.DefaultACME.Email = "catcher.mx.ax@lawrence.pm"
+	certmagic.DefaultACME.CA = certmagic.LetsEncryptStagingCA
+	certmagic.DefaultACME.DNS01Solver = &certmagic.DNS01Solver{
+		DNSProvider: &cloudflare.Provider{
+			APIToken: os.Getenv("CLOUDFLARE_TOKEN"),
+		},
 	}
 
 	// waitgroup for graceful shutdown
@@ -118,7 +94,7 @@ func run() error {
 	smtpd, err := smtp.NewServer(config.Domain, config.SMTP, func(email catcher.Email) error {
 		log.Printf("pushing email to consumer: %s -> %s", email.From, email.To)
 		return producer.Push(email)
-	}, magic)
+	})
 	if err != nil {
 		return fmt.Errorf("unable to start new smtpd server: %w", err)
 	}

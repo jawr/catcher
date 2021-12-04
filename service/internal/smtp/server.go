@@ -26,7 +26,7 @@ type Server struct {
 	smtpd smtp.Server
 }
 
-func NewServer(domain string, config Config, handler catcher.EmailHandlerFn, magic *certmagic.Config) (*Server, error) {
+func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*Server, error) {
 	if len(config.Addr) == 0 {
 		return nil, fmt.Errorf("%w: smtpd address is required", catcher.ErrInvalid)
 	}
@@ -43,8 +43,11 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn, mag
 	server.smtpd.Addr = config.Addr
 	server.smtpd.Domain = domain
 
-	if magic != nil {
-		server.smtpd.TLSConfig = magic.TLSConfig()
+	if len(config.TLSName) > 0 {
+		server.smtpd.TLSConfig, err = certmagic.TLS([]string{config.TLSName})
+		if err != nil {
+			return nil, fmt.Errorf("unable to get TLS for %q: %w", config.TLSName, err)
+		}
 	}
 
 	if config.ReadTimeout == 0 {

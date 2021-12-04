@@ -35,7 +35,7 @@ func TestServerInvalidConfig(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			is := is.New(t)
-			_, err := smtp.NewServer(tc.domain, tc.config, noopEmailHandlerFn, nil)
+			_, err := smtp.NewServer(tc.domain, tc.config, noopEmailHandlerFn)
 			is.True(errors.Is(err, catcher.ErrInvalid))
 		})
 	}
