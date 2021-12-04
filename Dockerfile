@@ -21,7 +21,7 @@ COPY --from=frontend-builder /build/out ./frontend
 COPY --from=service-builder /build/catcher ./
 COPY config.yaml ./
 USER catcher
-EXPOSE 80
-EXPOSE 25
+EXPOSE 8080
+EXPOSE 2525
 CMD ["./catcher"]
 

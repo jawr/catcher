@@ -9,16 +9,15 @@ import (
 )
 
 const (
-	defaultTimeout time.Duration = 30
-	defaultMaxMessageKBytes int = 1024
+	defaultTimeout          time.Duration = 30
+	defaultMaxMessageKBytes int           = 1024
 )
 
-
 type Config struct {
-	Addr string `yaml:"address"`
-	ReadTimeout time.Duration `yaml:"read_timeout"`
-	WriteTimeout time.Duration `yaml:"write_timeout"`
-    MaxMessageKBytes int `yaml:"max_message_kbytes"`
+	Addr             string        `yaml:"address"`
+	ReadTimeout      time.Duration `yaml:"read_timeout"`
+	WriteTimeout     time.Duration `yaml:"write_timeout"`
+	MaxMessageKBytes int           `yaml:"max_message_kbytes"`
 }
 
 type Server struct {
@@ -41,6 +40,7 @@ func NewServer(domain string, config Config, handler catcher.EmailHandlerFn) (*S
 
 	server.smtpd.Addr = config.Addr
 	server.smtpd.Domain = domain
+	server.smtpd.EnableREQUIRETLS = true
 
 	if config.ReadTimeout == 0 {
 		config.ReadTimeout = defaultTimeout
