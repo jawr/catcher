@@ -113,6 +113,7 @@ func (s *Server) handleSubscribe() http.HandlerFunc {
 			select {
 			case <-subscription.C:
 				emails := s.store.Get(subscriptionReq.Key)
+				log.Printf("emails is %v", emails)
 				if err := ws.WriteJSON(&emails); err != nil {
 					log.Printf("unable to write emails to websocket for %q: %s", subscriptionReq.Key, err)
 					return
