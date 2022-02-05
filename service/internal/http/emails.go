@@ -111,8 +111,9 @@ func (s *Server) handleSubscribe() http.HandlerFunc {
 			defer ticker.Stop()
 
 			select {
-			case email := <-subscription.C:
-				if err := ws.WriteJSON(&email); err != nil {
+			case <-subscription.C:
+				emails := s.store.Get(subscriptionReq.Key)
+				if err := ws.WriteJSON(&emails); err != nil {
 					log.Printf("unable to write emails to websocket for %q: %s", subscriptionReq.Key, err)
 					return
 				}
