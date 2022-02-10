@@ -19,7 +19,7 @@ const EmailsTable = (props: EmailsTableProps): ReactElement => {
   }
 
   const rendered = emails.map((email: Email, idx: number) => 
-    <EmailRow key={idx} email={email} onClick={() => setSelected(email)} />
+    <EmailRow idx={idx} key={idx} email={email} onClick={() => setSelected(email)} />
   )
 
   return (
@@ -41,12 +41,12 @@ const EmailsTable = (props: EmailsTableProps): ReactElement => {
   )
 }
 
-const EmailRow = ({ email, onClick }: {email: Email, onClick: MouseEventHandler }): ReactElement => {
+const EmailRow = ({ email, onClick, idx }: {email: Email, onClick: MouseEventHandler, idx: number }): ReactElement => {
   const receivedAt: Date = parseJSON(email.received_at);
   return (
-    <tr onClick={onClick}>
+    <tr data-test={`email-row-${idx}`} onClick={onClick}>
       <td className="px-6 py-4 whitespace-nowrap">{email.from}</td>
-      <td className="px-6 py-4 whitespace-nowrap overflow-ellipsis overflow-hidden">{email.subject}</td>
+      <td data-test={`email-row-subject`} className="px-6 py-4 whitespace-nowrap overflow-ellipsis overflow-hidden">{email.subject}</td>
       <td className="px-6 py-4 whitespace-nowrap">{formatDistanceToNow(receivedAt)} ago</td>
     </tr>
   )
