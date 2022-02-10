@@ -110,19 +110,20 @@ func (s *Server) handleSubscribe() http.HandlerFunc {
 			ticker := time.NewTicker(websocketPingPeriod)
 			defer ticker.Stop()
 
-			select {
-			case <-subscription.C:
-				emails := s.store.Get(subscriptionReq.Key)
-				log.Printf("emails is %v", emails)
-				if err := ws.WriteJSON(&emails); err != nil {
-					log.Printf("unable to write emails to websocket for %q: %s", subscriptionReq.Key, err)
-					return
-				}
+			for {
+				select {
+				case <-subscription.C:
+					emails := s.store.Get(subscriptionReq.Key)
+					if err := ws.WriteJSON(&emails); err != nil {
+						log.Printf("unable to write emails to websocket for %q: %s", subscriptionReq.Key, err)
+						return
+					}
 
-			case <-ticker.C:
-				ws.SetWriteDeadline(time.Now().Add(websocketWriteWait))
-				if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-					return
+				case <-ticker.C:
+					ws.SetWriteDeadline(time.Now().Add(websocketWriteWait))
+					if err := ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+						return
+					}
 				}
 			}
 		}()

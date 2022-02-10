@@ -36,6 +36,7 @@ const Emails: NextPage = () => {
           setEmails(emails);
       } catch (error) {
         setError(error as Error)
+        console.error(error, event.data)
       }
     }
   },[key])
